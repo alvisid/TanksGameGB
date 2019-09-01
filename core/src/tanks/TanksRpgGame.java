@@ -5,13 +5,25 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import tanks.units.PlayerTank;
+
+import java.util.Map;
 
 public class TanksRpgGame extends ApplicationAdapter {
 	private SpriteBatch batch;
-	private Tank tank;
-	private Bullet bullet;
+	private Map map;
+	private PlayerTank player;
+	private BulletEmitter bulletEmitter;
+	private BotEmitter botEmitter;
+	private float gameTimer;
 
-	public Bullet getBullet(){
+    public BulletEmitter getBulletEmitter() {
+        return bulletEmitter;
+    }
+
+
+
+ /*   public Bullet getBullet(){
 		return bullet;
 	}
 	
@@ -46,5 +58,5 @@ public class TanksRpgGame extends ApplicationAdapter {
 	@Override
 	public void dispose () {
 		batch.dispose();
-	}
+	}*/
 }
