@@ -7,12 +7,6 @@ public enum Direction {
     private int vy;
     private float angle;
 
-    Direction(int vx, int vy, float angle) {
-        this.vx = vx;
-        this.vy = vy;
-        this.angle = angle;
-    }
-
     public int getVx() {
         return vx;
     }
@@ -23,5 +17,11 @@ public enum Direction {
 
     public float getAngle() {
         return angle;
+    }
+
+    Direction(int vx, int vy, float angle) {
+        this.vx = vx;
+        this.vy = vy;
+        this.angle = angle;
     }
 }

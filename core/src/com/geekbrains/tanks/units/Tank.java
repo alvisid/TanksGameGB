@@ -5,18 +5,22 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
+import com.geekbrains.tanks.GameScreen;
 import com.geekbrains.tanks.TanksRpgGame;
 import com.geekbrains.tanks.Weapon;
+import com.geekbrains.tanks.utils.Direction;
 import com.geekbrains.tanks.utils.TankOwner;
 import com.geekbrains.tanks.utils.Utils;
 
 public abstract class Tank {
+    GameScreen gameScreen;
     TanksRpgGame game;
     TankOwner ownerType;
     Weapon weapon;
     TextureRegion texture;
     TextureRegion textureHp;
     Vector2 position;
+    Vector2 tmp;
     Circle circle;
 
     int hp;
@@ -31,8 +35,9 @@ public abstract class Tank {
     int width;
     int height;
 
-    public Tank(TanksRpgGame game) {
-        this.game = game;
+    public Tank(GameScreen game) {
+        this.gameScreen = gameScreen;
+        this.tmp = new Vector2(0.0f, 0.0f);
     }
 
     public Vector2 getPosition() {
@@ -85,17 +90,25 @@ public abstract class Tank {
         circle.setPosition(position);
     }
 
+    public void move(Direction direction, float dt) {
+
+        angle = direction.getAngle();
+        position.add(speed * direction.getVx() * dt, speed * direction.getVy() * dt);
+
+    }
+
     public void rotateTurretToPoint(float pointX, float pointY, float dt) {
         float angleTo = Utils.getAngle(position.x, position.y, pointX, pointY);
         turretAngle = Utils.makeRotation(turretAngle, angleTo, 270.0f, dt);
         turretAngle = Utils.angleToFromNegPiToPosPi(turretAngle);
     }
 
-    public void fire(float dt) {
+    public void fire() {
         if (fireTimer >= weapon.getFirePeriod()) {
             fireTimer = 0.0f;
             float angleRad = (float) Math.toRadians(turretAngle);
-            game.getBulletEmitter().activate(this, position.x, position.y, 320.0f * (float) Math.cos(angleRad), 320.0f * (float) Math.sin(angleRad), weapon.getDamage());
+            float projectileSpeed = 320.0f;
+            gameScreen.getBulletEmitter().activate(this, position.x, position.y, weapon.getProjectileSpeed() * (float) Math.cos(angleRad), weapon.getProjectileSpeed() * (float) Math.sin(angleRad), weapon.getDamage(), weapon.getProjectileLifeTime());
         }
     }
 }

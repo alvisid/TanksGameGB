@@ -4,7 +4,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.geekbrains.tanks.TanksRpgGame;
+import com.badlogic.gdx.math.Vector3;
+import com.geekbrains.tanks.GameScreen;
 import com.geekbrains.tanks.Weapon;
 import com.geekbrains.tanks.utils.Direction;
 import com.geekbrains.tanks.utils.TankOwner;
@@ -15,8 +16,9 @@ public class BotTank extends Tank {
     float aiTimerTo;
     float pursuitRadius;
     boolean active;
+    Vector3 lastPosition;
 
-    public BotTank(TanksRpgGame game, TextureAtlas atlas) {
+    public BotTank(GameScreen game, TextureAtlas atlas) {
         super(game);
         this.ownerType = TankOwner.AI;
         this.weapon = new Weapon(atlas);
@@ -61,11 +63,25 @@ public class BotTank extends Tank {
             prefferedDirection = Direction.values()[MathUtils.random(0, Direction.values().length - 1)];
             angle = prefferedDirection.getAngle();
         }
-        position.add(speed * prefferedDirection.getVx() * dt, speed * prefferedDirection.getVy() * dt);
-        float dst = this.position.dst(game.getPlayer().getPosition());
+//        position.add(speed * prefferedDirection.getVx() * dt, speed * prefferedDirection.getVy() * dt);
+        move(prefferedDirection, dt);
+//        float dst = this.position.dst(game.getPlayer().getPosition());
+        float dst = this.position.dst(gameScreen.getPlayer().getPosition());
         if (dst < pursuitRadius) {
-            rotateTurretToPoint(game.getPlayer().getPosition().x, game.getPlayer().getPosition().y, dt);
-            fire(dt);
+//            rotateTurretToPoint(game.getPlayer().getPosition().x, game.getPlayer().getPosition().y, dt);
+            rotateTurretToPoint(gameScreen.getPlayer().getPosition().x, gameScreen.getPlayer().getPosition().y, dt);
+            fire();
+        }
+
+        if (Math.abs(position.x - lastPosition.x) < 0.5f && Math.abs(position.y - lastPosition.y) < 0.5f) {
+            lastPosition.z += dt;
+            if (lastPosition.z > 0.3f) {
+                aiTimer += 10.0f;
+            }
+        } else {
+            lastPosition.x = position.x;
+            lastPosition.y = position.y;
+            lastPosition.z = 0.6f;
         }
         super.update(dt);
     }
